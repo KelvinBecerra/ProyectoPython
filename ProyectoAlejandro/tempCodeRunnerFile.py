@@ -1,0 +1,1 @@
+        datos=obtencion.json()
