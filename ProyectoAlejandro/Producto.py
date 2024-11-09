@@ -11,10 +11,10 @@ class Producto:
            
     def agregarCarro(self,carro):
         self.carros_compa.append(carro)
+        
     def __str__(self):
         return (f"id: {self.ids}, El producto: {self.nombre}, "
                 f"Descripcion: {self.descripcion}, Precio: {self.precio}, "
                 f"Categoria: {self.categoria}, Cantidad: {self.inventario}, "
                 f"Carros compatibles: {', '.join(self.carros_compa)}")
     
-    #revisar bien porque se escribe la lista de los carros compa de esa manera
