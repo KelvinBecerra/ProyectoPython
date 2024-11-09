@@ -1,25 +1,20 @@
-class Producto: 
+class Producto:
 
-    def __init__(self,id,nombre,descripcion,precio,categoria,inventario,) -> None:
-        self.id=id
-        self.nombre=nombre
-        self.descripcion=descripcion
-        self.precio=precio
-        self.categoria=categoria
-        self.inventario=inventario
-        self.carros_compa=[]
-
-    
-    def buscar_producto(self):
-        pass
-
-    def modificar_productos(self):
-        pass
-
-    def eliminar_producto(self):
-        pass
-
+    def __init__(self, ids, nombre, descripcion, precio, categoria, inventario,carros_compa=None) -> None:
+        self.ids= ids
+        self.nombre = nombre
+        self.descripcion = descripcion
+        self.precio = precio
+        self.categoria = categoria
+        self.inventario = inventario
+        self.carros_compa = carros_compa if carros_compa is not None else [] 
+           
+    def agregarCarro(self,carro):
+        self.carros_compa.append(carro)
     def __str__(self):
-        return f"El producto:{self.nombre}, Descripcion:{self.descripcion}, Precio: {self.descripcion}, Categoria {self.categoria}, Cantidad:{self.precio}"
-
- 
+        return (f"id: {self.ids}, El producto: {self.nombre}, "
+                f"Descripcion: {self.descripcion}, Precio: {self.precio}, "
+                f"Categoria: {self.categoria}, Cantidad: {self.inventario}, "
+                f"Carros compatibles: {', '.join(self.carros_compa)}")
+    
+    #revisar bien porque se escribe la lista de los carros compa de esa manera
