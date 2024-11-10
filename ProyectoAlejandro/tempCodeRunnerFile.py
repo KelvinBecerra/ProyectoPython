@@ -1,2 +1,1 @@
-ducto.append(producto)
-        return lista_
+l
