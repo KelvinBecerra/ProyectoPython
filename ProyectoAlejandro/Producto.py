@@ -8,7 +8,9 @@ class Producto:
         self.categoria = categoria
         self.inventario = inventario
         self.carros_compa = carros_compa if carros_compa is not None else [] 
-           
+    
+    
+
     def agregarCarro(self,carro):
         self.carros_compa.append(carro)
         

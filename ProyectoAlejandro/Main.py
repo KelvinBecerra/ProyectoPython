@@ -1,6 +1,6 @@
 from Producto import Producto
 from Clientes import Clientes
-
+from Venta import Venta
 import requests
 import json
 
@@ -247,19 +247,89 @@ def consumoAPI():  # funcion encargada de consumir la api, gestionarla a un obje
     except requests.exceptions.RequestException as e:
         print("Error de tipo: ", e)
         return []
+def generar_factura(lista_ventas):
+    pass
+def registrar_ventas(lista_ventas,lista_cliente,lista_producto):
+    while True:
+        print("Estas en 'Registrar ventas' ")
+        salir = input("Desea regresar? Si/No: ").lower()
+        if (salir == 'no'):
+            cliente_cedula=int(input("Ingresa la cedula del cliente: "))
+            cliente=None
+            # Verificar si el cliente existe
+            for i in lista_cliente:
+                if i.cedula == cliente_cedula:  # Si el cliente existe
+                    cliente = i
+                    break
+            
+            if cliente is None:  # Si no se encuentra el cliente
+                print("El cliente no existe. ¿Deseas agregarlo? si/no: ")
+                opcion = input("--> ").lower()
+                if opcion == 'si':
+                    registrar_cliente(lista_cliente)
+                else:
+                    print("No se puede continuar sin un cliente. Intente nuevamente.")
+                    continue  # Vuelve a pedir la cédula si no se quiere agregar el cliente
+            for i in lista_cliente:
+                if i.cedula == cliente_cedula: #para asignarle el cliente en cliente
+                    cliente = i
+                    break
+            
+            producto_comprado=[]
+            cantidades=[]
+            while True:
+                for idx, producto in enumerate(lista_producto, start=1):
+                    print(f"{idx}. ID: {producto.ids} - Nombre: {producto.nombre}")
+                seleccion=int(input("Ingresa el numero del producto correspondiente: "))
+                if 1 <= seleccion <= len(lista_producto):
+                    producto_seleccionado = lista_producto[seleccion - 1]  # se usa seleccion - 1 para obtener el indice correcto
+                    print(f"Has seleccionado el producto: {producto_seleccionado.nombre}")
+                    cant_producto=int(input("Ingresa la cantidad del producto comprado: "))
 
-def gestion_ventas():#funcion encargada de cumplir con el segundo punto del proyecto
-   while True:
-       print("Estas en 'Gestion de Ventas'")
-       print("Seleccionar una opcion correspondiente a su numero")
-       print("""
-             1)Registrar Venta
-             2)Generar factura
-             3)Buscar ventas
-             """)
-       opcion=int(input("--> "))
-       if (opcion==1):
-           pass
+                    producto_comprado.append(producto_seleccionado)
+                    cantidades.append(cant_producto)
+
+                else:
+                    print("Selección inválida. Intente nuevamente.")
+
+
+            
+                salir=input("Deseas seguir agregando?si/no: ").lower()
+                if (salir=='no'):
+                    break
+          #metodos de pago  
+            metodo_pago=input("Ingresa el metodo de pago dolares/bolivares: ").lower().replace(" ","")
+            metodo_envio=input("Ingrese el metodo del envio: ").lower().replace(" ","")
+
+            nueva_venta=Venta(cliente,metodo_pago,metodo_envio,producto_comprado,cantidades)
+            lista_ventas.append(nueva_venta)# lo agrego a la lista de ventas
+            print(" ")
+            print("Venta Registrada con exito!")
+            print(" ")
+            nueva_venta.mostrar_desglose()
+            print(" ")
+        elif(salir=='si'):
+            break
+def buscar_ventas(lista_ventas):
+    pass
+def gestion_ventas(lista_ventas,lista_cliente,lista_producto):#funcion encargada de cumplir con el segundo punto del proyecto
+    while True:
+        print("Estas en 'Gestion de Ventas'")
+        print("Seleccionar una opcion correspondiente a su numero")
+        print("""
+            1)Registrar Venta
+            2)Generar factura
+            3)Buscar ventas
+            """)
+        opcion=int(input("--> "))
+        if (opcion==1):
+           registrar_ventas(lista_ventas,lista_cliente,lista_producto)
+        elif(opcion==2):
+           generar_factura(lista_ventas)
+        elif(opcion==3):
+            buscar_ventas(lista_ventas)
+        else:
+            print("Dato invalido")
 
 def registrar_cliente(lista_compradores):
     nombre_cli=input("Ingresar nombre: ")
@@ -271,19 +341,20 @@ def registrar_cliente(lista_compradores):
     natural_juridico=input("Escribir V (persona natural) J(persona juridica): ").upper().replace(" ", "")
     
     nombre_contacto=""
-    
-    email_contacto=""
 
+    email_contacto=""
+    
     if natural_juridico=='J':
         nombre_contacto=input("Ingresar nombre del contacto: ")
         telf_contacto=int(input("Ingresar telefono del contacto: "))
-        email_contacto=input("Ingresar email del contacto: ")
+        email_contacto=input("Ingresar email del contacto sin agregar '@gmail.com': ")+'@gmail.com'
 
-    email=input("Ingresar correo electronico: ")
+    email=input("Ingresar correo electronico sin agregar '@gmail.com': ")+'@gmail.com'
     direccion=input("Ingresar direccion: ")
     telefono=int(input("Ingresar telefono: "))
     clientico=Clientes(nombre_cli,ids,email,direccion,telefono,natural_juridico,nombre_contacto,telf_contacto,email_contacto)
     lista_compradores.append(clientico)
+    print(" ")
     print("Cliente agregado: ",clientico.nombre,clientico.cedula)
 
 def modificar_cliente(lista_clientes):
@@ -353,7 +424,7 @@ def modificar_cliente(lista_clientes):
 
 
 def eliminar_cliente(lista_clientes):
-     while True:
+    while True:
 
         print("Estas en 'Eliminar cliente'")
         salir = input("Desea regresar? Si/No: ").lower()
@@ -373,24 +444,42 @@ def eliminar_cliente(lista_clientes):
         else:
             print("Dato invalido")
 def buscar_cliente(lista_cliente):
-    pass
-def registrarVenta():
     while True:
 
-        print("Estas en 'Registrar venta'")
+        print("Estas en 'Buscar cliente'")
         salir = input("Desea regresar? Si/No: ").lower()
         if (salir == 'no'):
-            cedula=int(input("Cliente que realizo la venta"))
-            producto_comprado=input("Ingrese el nombre del producto comprado: ").lower()
-            cant_produc=int(input("Ingresar la cantidad del producto: "))
-            metodo_pago=input("Metodo de pago? PagoMovil/efectivo/punto: " ).lower()
-            metodo_envio=input("Ingrese el metodo del envio: ").lower()
+            print("Selecciona el numero correspondiente: ")
+            print("""
+                  1)Cedula/rif
+                  2)Email""")
+            opcion=int(input("--> "))
+            cliente_buscado=None
 
-        elif(salir=='si'):
+            if(opcion==1):
+                cedula_buscar=int(input("Ingresa la cedula del cliente a buscar: "))
+                for i in lista_cliente:
+                    if i.cedula==cedula_buscar:
+                        cliente_buscado=i
+                        print(cliente_buscado)
+                if not cliente_buscado:
+                    print("No encontrado")
+            elif (opcion==2):
+                correo_buscar=input("Ingrese el correo a buscar sin agregar '@gmail.com': ")+'@gmail.com' 
+                for i in lista_cliente:
+                    if i.correo==correo_buscar:
+                        cliente_buscado=i 
+                        print(cliente_buscado) 
+                if not cliente_buscado:
+                    print("No encontrado")    
+            elif(opcion!=1 or opcion!=2):
+                print("Dato invalido")
+        elif (salir=='si'):
             break
-        else:
-            print("Dato invalido")
+        elif(salir!='si' or salir!='no'):
+            print("dato invalido")
 
+    
 def gestion_clientes(lista_clientes):#funcion encargada de cumplir con el tercer punto del proyecto
     while True:
         print("Estas en 'Gestion de Clientes'")
@@ -417,19 +506,58 @@ def gestion_clientes(lista_clientes):#funcion encargada de cumplir con el tercer
             break
         else:
             print("Dato invalido")
-
-def gestion_pagos():# funcion encargada de cumplir con el cuaarto punto
+def registrar_pago(lista_ventas):
+    pass
+def buscar_pago(lista_ventas):
     pass
 
-def gestion_envios():#funcion encargada de cumplir con el quinto punto del programa
+           
+def registrar_envios(lista_ventas):
     pass
+def buscar_envios(lista_ventas):
+    pass
+def gestion_envios(lista_ventas,lista_clientes):# funcion encargada de cumplir con el cuaarto punto
+    while True:
+        print("Estas en 'Gestion de Envios'")
+        print("Seleccionar una opcion correspondiente a su numero")
+        print("""
+            1)Registrar los envíos
+            2)Buscar envíos
+            
+            """)
+        opcion=int(input("--> "))
+        if (opcion==1):
+           registrar_envios(lista_ventas)
+        elif(opcion==2):
+            buscar_envios(lista_ventas)
+        else:
+            print("Dato invalido")
+def gestion_pagos(lista_ventas):# funcion encargada de cumplir con el cuaarto punto
+    while True:
+        print("Estas en 'Gestion de Pagos'")
+        print("Seleccionar una opcion correspondiente a su numero")
+        print("""
+            1)Registrar pago
+            2)Buscar pago
+            
+            """)
+        opcion=int(input("--> "))
+        if (opcion==1):
+           registrar_pago(lista_ventas)
+        elif(opcion==2):
+            buscar_pago(lista_ventas)
+        else:
+            print("Dato invalido")
+
+
 
 def estadisticas():#funcion encargada de cumplir con el sexto punto del
     pass
+
 def main():  # funcion encargada de la gestion de menu del programa
     lista_producto = consumoAPI()
     lista_clientes=cargar_clientes()    
-
+    lista_ventas=cargar_ventas()
     while True:
         print("-"*10, "Bienvenido a la tienda de productos", "-"*10)
         print("Selecciona una de las opciones con el numero correspondiente:")
@@ -446,8 +574,8 @@ def main():  # funcion encargada de la gestion de menu del programa
 
             if (respuesta == 1):
                 gestion_productos(lista_producto)
-            elif (respuesta==2):#falta
-                gestion_ventas()
+            elif (respuesta==2):
+                gestion_ventas(lista_ventas,lista_clientes,lista_producto)
             elif(respuesta==3):
                 gestion_clientes(lista_clientes)
             elif (respuesta==4):
@@ -466,6 +594,18 @@ def main():  # funcion encargada de la gestion de menu del programa
         except ValueError:
             print("Ingrese un numero valido")
 
+def cargar_ventas():
+    try:
+        with open('venta.txt','r',encoding='UTF-8') as archivo:
+            venta_data=json.load(archivo)
+            lista_ventas=[Venta(**venta_data) for venta_data in venta_data]
+            return lista_ventas
+    except FileNotFoundError:
+        print("No se encontró el archivo de clientes. Se iniciará con una lista vacía.")
+        return []
+    except json.JSONDecodeError:
+        print("Error al leer el archivo de clientes. Se iniciará con una lista vacía.")
+        return []
 def cargar_clientes():
     try:
         with open('clientes.txt', 'r', encoding='UTF-8') as archivo:
